@@ -1,0 +1,12 @@
+{
+    "name": "alexandr/eloquent-json",
+    "authors": [
+        {
+            "name": "Krasnikov Alexandr",
+            "email": "krasnikovrs@gmail.com"
+        }
+    ],
+    "require": {
+        "spatie/laravel-translatable": "^4.1"
+    }
+}
