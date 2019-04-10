@@ -30,10 +30,6 @@ class Json
      * @var array
      */
     private $included = [];
-    /**
-     * @var array
-     */
-    private $links = [];
 
     /**
      * Json constructor.
@@ -47,7 +43,6 @@ class Json
         $this->attributes = $this->getAttributes($this->model);
         $this->setRelationships();
         $this->setIncluded();
-        $this->links = $this->getLinks($model);
     }
 
     /**
@@ -80,9 +75,14 @@ class Json
     private function getAttributes(Model $model)
     {
         $response = [];
+        $hidden = $model->hidden ?: [];
+
+        if (!config('jsonSpec.show_id')) {
+            $hidden[] = 'id';
+        }
         foreach ($model->attributesToArray() as $key => $attribute) {
             $key = $this->snakeToCamelCase($key);
-            if (in_array($key, array_merge($model->hidden ?: [], ['id']))) {
+            if (in_array($key, $hidden)) {
                 continue;
             }
             $fields = request('fields');
@@ -192,13 +192,5 @@ class Json
                  });
             }
         });
-    }
-
-    /**
-     * @param Model $model
-     */
-    private function getLinks(Model $model)
-    {
-
     }
 }

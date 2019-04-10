@@ -15,3 +15,12 @@
 - php artisan vendor:publish --provider="Krasnikov\EloquentJSON\EloquentJsonServiceProvider" --tag=translations
 - change date format and route prefix in `config/jsonSpec.php`
 - use `ModelJson` trait in your models on extended it `JsonModel` class
+
+## Load relationships
+```
+GET /articles/1?include=author,comments.author HTTP/1.1
+```
+### Sparse Fieldsets
+```
+GET /articles?include=author&fields[articles]=title,body&fields[people]=name HTTP/1.1
+```
