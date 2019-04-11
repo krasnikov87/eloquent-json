@@ -2,10 +2,11 @@
 
 namespace Krasnikov\EloquentJSON\Traits;
 
-use DateTimeInterface;
-use Illuminate\Support\Facades\Config;
+use Krasnikov\EloquentJSON\Builder;
 use Krasnikov\EloquentJSON\IncludeScope;
 use Krasnikov\EloquentJSON\Json;
+use Sofa\Eloquence\Query\Builder as QueryBuilder;
+
 
 trait ModelJson
 {
@@ -24,12 +25,32 @@ trait ModelJson
         return (new Json($this))->toJson();
     }
 
-    /**
-     * @param DateTimeInterface $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date): string
+    public function allowedReferences(): array
     {
-        return $date->format(Config::get('jsonSpec.date_format'));
+        return $this->allowedReferences ?? [];
+    }
+
+    /**
+     * @return Builder
+     */
+    public function newJsonQuery()
+    {
+        return (new Builder(
+            $this->newJsonQueryBuilder()
+        ))->setModel($this);
+    }
+
+    /**
+     * Get a new query builder instance for the connection.
+     *
+     * @return \Sofa\Eloquence\Query\Builder
+     */
+    protected function newJsonQueryBuilder()
+    {
+        $conn = $this->getConnection();
+
+        $grammar = $conn->getQueryGrammar();
+
+        return new QueryBuilder($conn, $grammar, $conn->getPostProcessor());
     }
 }

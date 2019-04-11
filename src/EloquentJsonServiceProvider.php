@@ -2,7 +2,9 @@
 
 namespace Krasnikov\EloquentJSON;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Krasnikov\EloquentJSON\Exceptions\Handler;
 
@@ -18,6 +20,10 @@ class EloquentJsonServiceProvider extends ServiceProvider
             __DIR__ . '/../config/jsonSpec.php' => config_path('jsonSpec.php')
         ], 'config');
         $this->mergeConfigFrom(__DIR__ . '/../config/jsonSpec.php', 'jsonSpec');
+
+        Carbon::serializeUsing(function ($carbon) {
+            return $carbon->format(Config::get('jsonSpec.date_format'));
+        });
     }
     public function register()
     {
