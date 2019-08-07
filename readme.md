@@ -9,7 +9,7 @@
 
 ## Install
 
-- `composer require ....`
+- `composer require krasnikov/eloquent-json`
 - add `\Krasnikov\EloquentJSON\EloquentJsonServiceProvider::class,` to Application Service Providers
 - `php artisan vendor:publish --provider="Krasnikov\EloquentJSON\EloquentJsonServiceProvider" --tag=config`
 - `php artisan vendor:publish --provider="Krasnikov\EloquentJSON\EloquentJsonServiceProvider" --tag=translations`
