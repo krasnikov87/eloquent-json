@@ -8,8 +8,15 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Krasnikov\EloquentJSON\Exceptions\Handler;
 
+/**
+ * Class EloquentJsonServiceProvider
+ * @package Krasnikov\EloquentJSON
+ */
 class EloquentJsonServiceProvider extends ServiceProvider
 {
+    /**
+     * @return void
+     */
     public function boot()
     {
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'EloquentJson');
@@ -25,6 +32,10 @@ class EloquentJsonServiceProvider extends ServiceProvider
             return $carbon->format(Config::get('jsonSpec.date_format'));
         });
     }
+
+    /**
+     * @return void
+     */
     public function register()
     {
         $this->app->singleton(ExceptionHandler::class, Handler::class);

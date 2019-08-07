@@ -5,6 +5,10 @@ namespace Krasnikov\EloquentJSON;
 use Illuminate\Container\Container;
 use Illuminate\Pagination\Paginator;
 
+/**
+ * Class Builder
+ * @package Krasnikov\EloquentJSON
+ */
 class Builder extends \Sofa\Eloquence\Builder
 {
     /**

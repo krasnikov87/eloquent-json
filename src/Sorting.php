@@ -5,6 +5,10 @@ namespace App\Domain\Core;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Class Sorting
+ * @package App\Domain\Core
+ */
 class Sorting
 {
     const SORT_ASC = 'asc';

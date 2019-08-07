@@ -8,6 +8,10 @@ use Krasnikov\EloquentJSON\Json;
 use Sofa\Eloquence\Query\Builder as QueryBuilder;
 
 
+/**
+ * Trait ModelJson
+ * @package Krasnikov\EloquentJSON\Traits
+ */
 trait ModelJson
 {
     /**
@@ -25,6 +29,9 @@ trait ModelJson
         return (new Json($this))->toJson();
     }
 
+    /**
+     * @return array
+     */
     public function allowedReferences(): array
     {
         return $this->allowedReferences ?? [];

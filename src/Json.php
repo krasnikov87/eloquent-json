@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
 
+/**
+ * Class Json
+ * @package Krasnikov\EloquentJSON
+ */
 class Json
 {
     /**
@@ -179,6 +183,10 @@ class Json
         return $relations;
     }
 
+    /**
+     * @param Model $model
+     * @return array|null
+     */
     private function getRelationsForOneItem(Model $model)
     {
         if (!isset($model->id)) {

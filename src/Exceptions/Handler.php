@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class Handler
+ * @package Krasnikov\EloquentJSON\Exceptions
+ */
 class Handler extends AbstractExceptionHandler implements ExceptionHandler
 {
 
