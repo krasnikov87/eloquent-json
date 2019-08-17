@@ -97,6 +97,8 @@ class Json
             }
             if ($fields && isset($fields[$class]) && in_array($key, explode(',', $fields[$class]))) {
                 $response[$name] = $this->getTranslate($model, $key);
+            } elseif ($fields && isset($fields[$class]) && in_array($name, explode(',', $fields[$class]))) {
+                $response[$name] = $this->getTranslate($model, $key);
             }
             if (!$fields || !isset($fields[$class])) {
                 $response[$name] = $this->getTranslate($model, $key);
