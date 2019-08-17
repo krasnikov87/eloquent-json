@@ -290,3 +290,5 @@ GET /articles?page[number]=2&page[size]=10 HTTP/1.1
     ]
 }
 ```
+## Sample output
+[CHANGELOG.md](./CHANGELOG.md)

@@ -4,7 +4,7 @@
 #### Changed
 #### Deprecated
 #### Removed
-* [fe30e5a](../../commit/fe30e5a) remove spatie/laravel-permission from require
+* [57a584c](../../commit/57a584c) remove spatie/laravel-permission from require
 #### Fixed
 * [bd996ec](../../commit/bd996ec) fixed work with camelCase field name
 #### Security
