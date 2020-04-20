@@ -3,42 +3,48 @@
 namespace Krasnikov\EloquentJSON;
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder as IlluminateBuilder;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 
 /**
  * Class Builder
  * @package Krasnikov\EloquentJSON
  */
-class Builder extends \Sofa\Eloquence\Builder
+class Builder extends IlluminateBuilder
 {
     /**
      * @param int $perPage
      * @param array $columns
      * @param string $pageName
      * @param null $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|JsonSpecPaginator|mixed
+     * @return LengthAwarePaginator|JsonSpecPaginator|mixed
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
-        (new IncludeScope())->apply($this, $this->model);
-
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
-
         $perPage = $perPage ?: $this->model->getPerPage();
 
         $results = ($total = $this->toBase()->getCountForPagination())
             ? $this->forPage($page, $perPage)->get($columns)
             : $this->model->newCollection();
 
-        return $this->paginator($results, $total, $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => $pageName,
-        ]);
+        return $this->paginator(
+            $results->toArray(),
+            $total,
+            $perPage,
+            $page,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]
+        );
     }
 
 
     /**
-     * @param \Illuminate\Support\Collection $items
+     * @param Collection $items
      * @param int $total
      * @param int $perPage
      * @param int $currentPage
@@ -47,8 +53,15 @@ class Builder extends \Sofa\Eloquence\Builder
      */
     protected function paginator($items, $total, $perPage, $currentPage, $options)
     {
-        return Container::getInstance()->makeWith(JsonSpecPaginator::class, compact(
-            'items', 'total', 'perPage', 'currentPage', 'options'
-        ));
+        return Container::getInstance()->makeWith(
+            JsonSpecPaginator::class,
+            compact(
+                'items',
+                'total',
+                'perPage',
+                'currentPage',
+                'options'
+            )
+        );
     }
 }

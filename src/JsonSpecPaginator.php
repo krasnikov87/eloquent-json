@@ -16,46 +16,15 @@ class JsonSpecPaginator extends LengthAwarePaginator
     /**
      * @return array
      */
-    public function toJsonSpec(): array
+    public function toArray(): array
     {
-        $links = [
-            'self' => $this->url($this->currentPage()),
-            'first' => $this->url(1),
-            'last' => $this->url($this->lastPage()),
-        ];
-
-        if ($next = $this->nextPageUrl()) {
-            $links['next'] = $next;
-        }
-
-        if ($prev = $this->previousPageUrl()) {
-            $links['prev'] = $prev;
-        }
-
-        $data = [];
-        $included = [];
-
-        $this->items->map(function (Model $model) use (&$data, &$included){
-            $val = $model->toJsonSpec();
-            $data[] = $val['data'];
-
-            if (isset($val['included'])) {
-                $included[] = $val['included'];
-            }
-        });
-
         $res = [
-            'data' => $data,
+            'data' => $this->items->toArray(),
             'meta' => [
                 'total' => $this->total,
                 'perPage' => $this->perPage,
             ],
-            'links' => $links
         ];
-
-        if (count($included)) {
-            $res['included'] = collect($included)->collapse()->unique()->values();
-        }
 
         return $res;
     }

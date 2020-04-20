@@ -3,10 +3,9 @@
 namespace Krasnikov\EloquentJSON\Traits;
 
 use Krasnikov\EloquentJSON\Builder;
-use Krasnikov\EloquentJSON\IncludeScope;
 use Krasnikov\EloquentJSON\Json;
-use Sofa\Eloquence\Query\Builder as QueryBuilder;
-
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Krasnikov\EloquentJSON\JsonSpecCollection;
 
 /**
  * Trait ModelJson
@@ -14,13 +13,6 @@ use Sofa\Eloquence\Query\Builder as QueryBuilder;
  */
 trait ModelJson
 {
-    /**
-     * @return void
-     */
-    public static function bootModelJson(): void
-    {
-        static::addGlobalScope(new IncludeScope);
-    }
     /**
      * @return array
      */
@@ -30,17 +22,9 @@ trait ModelJson
     }
 
     /**
-     * @return array
-     */
-    public function allowedReferences(): array
-    {
-        return $this->allowedReferences ?? [];
-    }
-
-    /**
      * @return Builder
      */
-    public function newJsonQuery()
+    public function newQuery()
     {
         return (new Builder(
             $this->newJsonQueryBuilder()
@@ -50,7 +34,7 @@ trait ModelJson
     /**
      * Get a new query builder instance for the connection.
      *
-     * @return \Sofa\Eloquence\Query\Builder
+     * @return QueryBuilder
      */
     protected function newJsonQueryBuilder()
     {
@@ -59,5 +43,16 @@ trait ModelJson
         $grammar = $conn->getQueryGrammar();
 
         return new QueryBuilder($conn, $grammar, $conn->getPostProcessor());
+    }
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param  array  $models
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new JsonSpecCollection($models);
     }
 }

@@ -6,12 +6,16 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Exceptions\Handler as AbstractExceptionHandler;
+use App\Exceptions\Handler as AbstractExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 /**
  * Class Handler
@@ -42,11 +46,11 @@ class Handler extends AbstractExceptionHandler implements ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception $exception
+     * @param Throwable $exception
      * @return void
      * @throws Exception
      */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
@@ -54,11 +58,12 @@ class Handler extends AbstractExceptionHandler implements ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Throwable $exception
+     * @return Response|JsonResponse|SymfonyResponse
+     * @throws Throwable
      */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         if ($exception instanceof ModelNotFoundException && $request->expectsJson()) {
             return response()->json([

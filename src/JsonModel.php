@@ -2,14 +2,14 @@
 
 namespace Krasnikov\EloquentJSON;
 
-use Illuminate\Database\Eloquent\Model;
+use Krasnikov\DDDCore\BaseModel;
 use Krasnikov\EloquentJSON\Traits\ModelJson;
 
 /**
  * Class JsonModel
  * @package Krasnikov\EloquentJSON
  */
-class JsonModel extends Model
+class JsonModel extends BaseModel
 {
     use ModelJson;
 }

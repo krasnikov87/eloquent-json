@@ -32,10 +32,6 @@ class Json
      * @var array
      */
     private $relationships = [];
-    /**
-     * @var array
-     */
-    private $included = [];
 
     /**
      * Json constructor.
@@ -48,7 +44,6 @@ class Json
         $this->id = $this->getId();
         $this->attributes = $this->getAttributes($this->model);
         $this->relationships = $this->setRelationships(null);
-        $this->included = $this->setIncluded(null)->toArray();
     }
 
     /**
@@ -65,10 +60,6 @@ class Json
         ];
         if ($this->relationships) {
             $data['data']['relationships'] = $this->relationships;
-        }
-
-        if ($this->included) {
-            $data['included'] = $this->included;
         }
 
         return $data;
@@ -90,7 +81,8 @@ class Json
                 continue;
             }
             $name = $this->snakeToCamelCase($key);
-            $fields = request('fields');
+
+            $fields = app('request')->get('fields');
             $class = $this->getClassName($model);
             if (!isset($fields[$class])) {
                 $fields = null;
@@ -114,7 +106,7 @@ class Json
      */
     private function getTranslate(Model $model, string $key)
     {
-        if (request('translations') && in_array($key, $model->translatable)) {
+        if (app('request')->get('translations') && in_array($key, $model->translatable)) {
             return $model->getTranslations($key);
         }
         return $model->$key;
@@ -163,25 +155,29 @@ class Json
         }
 
         $relations = [];
-        collect($model->getRelations())->each(function ($item, string $key) use (&$relations) {
-            if ($item instanceof Model) {
-                $rel = $this->getRelationsForOneItem($item);
-                if ($rel) {
-                    $relations[$key]['data'] = $rel;
+        collect($model->getRelations())->each(
+            function ($item, string $key) use (&$relations) {
+                if ($item instanceof Model) {
+                    $rel = $this->getRelationsForOneItem($item);
+                    if ($rel) {
+                        $relations[$key]['data'] = $rel;
+                    }
+                    return;
                 }
-                return;
-            }
 
-            if (is_array($item)) {
-                $item = collect($item);
-            }
+                if (is_array($item)) {
+                    $item = collect($item);
+                }
 
-            if ($item instanceof Collection) {
-                $relations[$key]['data'] = $item->map(function ($item) {
-                    return $this->getRelationsForOneItem($item);
-                })->filter()->values();
+                if ($item instanceof Collection) {
+                    $relations[$key]['data'] = $item->map(
+                        function ($item) {
+                            return $this->getRelationsForOneItem($item);
+                        }
+                    )->filter()->values();
+                }
             }
-        });
+        );
         return $relations;
     }
 
@@ -202,66 +198,12 @@ class Json
         $res = [
             'id' => $model->id,
             'type' => $this->getClassName($model),
+            'attributes' => $this->getAttributes($model)
         ];
 
         if (count($rel ?? [])) {
             $res['relations'] = $rel;
         }
         return $res;
-    }
-
-    /**
-     * @return void
-     */
-    private function setIncluded(?Model $model): SupportCollection
-    {
-        if (!$model) {
-            $model = $this->model;
-        }
-        $included = collect();
-        collect($model->getRelations())->map(function ($item) use ($included) {
-            if ($item instanceof Model) {
-                $this->getIncludeForOneItem($item)->each(function ($inc) use ($included) {
-                    $included->push($inc);
-                });
-
-                return;
-            }
-
-            if (is_array($item)) {
-                $item = collect($item);
-            }
-
-            if ($item instanceof Collection) {
-                collect($item)->each(function ($item) use ($included) {
-                    $this->getIncludeForOneItem($item)->each(function ($inc) use ($included) {
-                        $included->push($inc);
-                    });
-                });
-            }
-        });
-        return $included;
-    }
-
-    /**
-     * @param Model $model
-     * @return array
-     */
-    private function getIncludeForOneItem(Model $model): SupportCollection
-    {
-        $included = collect();
-        if (!$model->id) {
-            return collect();
-        }
-        $this->setIncluded($model)->each(function ($inc) use ($included) {
-            $included->push($inc);
-        });
-
-        $included->push([
-            'id' => $model->id,
-            'type' => $this->getClassName($model),
-            'attributes' => $this->getAttributes($model)
-        ]);
-        return $included;
     }
 }
